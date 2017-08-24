@@ -26,10 +26,11 @@ fn basic() {
         .connect(creds, stream)
         .unwrap();
     stream.write_all(b"GET / HTTP/1.0\r\n\r\n").unwrap();
+    stream.flush().unwrap();
     let mut out = vec![];
     stream.read_to_end(&mut out).unwrap();
-    assert!(out.starts_with(b"HTTP/1.0 200 OK"));
-    assert!(out.ends_with(b"</html>"));
+    assert!(out.starts_with(b"HTTP/1.0 200 OK") || out.starts_with(b"HTTP/1.0 302 Found"));
+    assert!(out.ends_with(b"</html>") || out.ends_with(b"</HTML>\r\n"));
 }
 
 #[test]
@@ -53,10 +54,11 @@ fn valid_algorithms() {
         .connect(creds, stream)
         .unwrap();
     stream.write_all(b"GET / HTTP/1.0\r\n\r\n").unwrap();
+    stream.flush().unwrap();
     let mut out = vec![];
     stream.read_to_end(&mut out).unwrap();
-    assert!(out.starts_with(b"HTTP/1.0 200 OK"));
-    assert!(out.ends_with(b"</html>"));
+    assert!(out.starts_with(b"HTTP/1.0 200 OK") || out.starts_with(b"HTTP/1.0 302 Found"));
+    assert!(out.ends_with(b"</html>") || out.ends_with(b"</HTML>\r\n"));
 }
 
 fn unwrap_handshake<S>(e: HandshakeError<S>) -> io::Error {
@@ -96,10 +98,11 @@ fn valid_protocol() {
         .connect(creds, stream)
         .unwrap();
     stream.write_all(b"GET / HTTP/1.0\r\n\r\n").unwrap();
+    stream.flush().unwrap();
     let mut out = vec![];
     stream.read_to_end(&mut out).unwrap();
-    assert!(out.starts_with(b"HTTP/1.0 200 OK"));
-    assert!(out.ends_with(b"</html>"));
+    assert!(out.starts_with(b"HTTP/1.0 200 OK") || out.starts_with(b"HTTP/1.0 302 Found"));
+    assert!(out.ends_with(b"</html>") || out.ends_with(b"</HTML>\r\n"));
 }
 
 #[test]
@@ -212,6 +215,7 @@ fn verify_callback_success() {
         .connect(creds, stream)
         .unwrap();
     stream.write_all(b"GET / HTTP/1.0\r\nHost: self-signed.badssl.com\r\n\r\n").unwrap();
+    stream.flush().unwrap();
     let mut out = vec![];
     stream.read_to_end(&mut out).unwrap();
     assert!(out.starts_with(b"HTTP/1.1 200 OK"));
