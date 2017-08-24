@@ -26,7 +26,6 @@ fn basic() {
         .connect(creds, stream)
         .unwrap();
     stream.write_all(b"GET / HTTP/1.0\r\n\r\n").unwrap();
-    stream.flush().unwrap();
     let mut out = vec![];
     stream.read_to_end(&mut out).unwrap();
     assert!(out.starts_with(b"HTTP/1.0 200 OK") || out.starts_with(b"HTTP/1.0 302 Found"));
@@ -54,7 +53,6 @@ fn valid_algorithms() {
         .connect(creds, stream)
         .unwrap();
     stream.write_all(b"GET / HTTP/1.0\r\n\r\n").unwrap();
-    stream.flush().unwrap();
     let mut out = vec![];
     stream.read_to_end(&mut out).unwrap();
     assert!(out.starts_with(b"HTTP/1.0 200 OK") || out.starts_with(b"HTTP/1.0 302 Found"));
@@ -98,7 +96,6 @@ fn valid_protocol() {
         .connect(creds, stream)
         .unwrap();
     stream.write_all(b"GET / HTTP/1.0\r\n\r\n").unwrap();
-    stream.flush().unwrap();
     let mut out = vec![];
     stream.read_to_end(&mut out).unwrap();
     assert!(out.starts_with(b"HTTP/1.0 200 OK") || out.starts_with(b"HTTP/1.0 302 Found"));
@@ -215,7 +212,6 @@ fn verify_callback_success() {
         .connect(creds, stream)
         .unwrap();
     stream.write_all(b"GET / HTTP/1.0\r\nHost: self-signed.badssl.com\r\n\r\n").unwrap();
-    stream.flush().unwrap();
     let mut out = vec![];
     stream.read_to_end(&mut out).unwrap();
     assert!(out.starts_with(b"HTTP/1.1 200 OK"));
